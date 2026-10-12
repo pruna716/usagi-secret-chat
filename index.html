@@ -116,7 +116,7 @@ function setMode(m){
   mode=m;
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.mode===m));
   if(m==="encode"){
-    input.maxLength=80;input.placeholder="메시지를 입력해줘";
+    input.maxLength=40;input.placeholder="메시지를 입력해줘";
     $("inputLabel").textContent="메시지";$("outputLabel").textContent="우사기 언어";
     $("go").textContent="우사기 언어로 바꾸기";$("countWrap").style.display="block";
   }else{
