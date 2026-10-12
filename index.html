@@ -1,266 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>우사기의 비밀대화</title>
-<style>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>우사기의 비밀대화</title><style>
 *{box-sizing:border-box}
-body{
-  margin:0;min-height:100vh;padding:24px;
-  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:linear-gradient(180deg,#f9fbff,#fff9f2);
-  color:#202020;
-}
-.wrap{width:min(900px,100%);margin:auto}
-.hero{text-align:center;margin-bottom:22px}
-.hero h1{margin:0;font-size:clamp(34px,6vw,58px);letter-spacing:-0.04em}
-.card{
-  background:#fff;border:3px solid #222;border-radius:28px;padding:24px;
-  box-shadow:8px 8px 0 #222;
-}
-.mode-tabs,.actions{display:flex;gap:10px;flex-wrap:wrap}
-.mode-tabs{margin-bottom:18px}
-button{
-  border:2px solid #222;border-radius:999px;padding:12px 18px;
-  font:inherit;font-weight:800;cursor:pointer;background:#eaf7ff;
-  box-shadow:3px 3px 0 #222;
-}
-button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #222}
-.tab.active,.primary{background:#fff38f}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:780px){.row{grid-template-columns:1fr}}
+body{margin:0;min-height:100vh;padding:24px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(#f9fbff,#fff9f2);color:#222}
+.wrap{width:min(940px,100%);margin:auto}.hero{text-align:center;margin-bottom:22px}.hero h1{margin:0;font-size:clamp(34px,6vw,58px)}
+.card{background:#fff;border:3px solid #222;border-radius:28px;padding:24px;box-shadow:8px 8px 0 #222;margin-bottom:22px}
+.tabs,.actions,.stats{display:flex;gap:10px;flex-wrap:wrap}.tabs{margin-bottom:18px}
+button{border:2px solid #222;border-radius:999px;padding:12px 18px;font:inherit;font-weight:800;background:#eaf7ff;box-shadow:3px 3px 0 #222;cursor:pointer}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #222}.tab.active,.primary{background:#fff38f}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:780px){.row{grid-template-columns:1fr}}
 label{display:block;margin-bottom:8px;font-weight:900}
-textarea{
-  width:100%;min-height:240px;border:2px solid #222;border-radius:18px;
-  padding:16px;font:inherit;font-size:17px;line-height:1.7;resize:vertical;
-}
-.counter{text-align:right;font-size:13px;color:#777;margin-top:6px}
-.actions{margin-top:18px}
-.status{margin-top:12px;min-height:24px;font-weight:700;color:#555}
-.mini{margin-top:8px;color:#777;font-size:13px;line-height:1.6}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <section class="hero">
-    <h1>우사기의 비밀대화</h1>
-  </section>
-
-  <section class="card">
-    <div class="mode-tabs">
-      <button class="tab active" data-mode="encode">우사기 언어로</button>
-      <button class="tab" data-mode="decode">사람 언어로</button>
-    </div>
-
-    <div class="row">
-      <div>
-        <label id="inputLabel">메시지</label>
-        <textarea id="input" maxlength="80" placeholder="메시지를 입력해줘"></textarea>
-        <div class="counter"><span id="counter">0</span> / 80</div>
-      </div>
-
-      <div>
-        <label id="outputLabel">변환 결과</label>
-        <textarea id="output" readonly placeholder="여기에 결과가 나와"></textarea>
-        <div class="mini">복사해서 친구에게 보내면 돼</div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="primary" id="convertBtn">우사기 언어로 바꾸기</button>
-      <button id="copyBtn">결과 복사</button>
-      <button id="swapBtn">반대로 바꾸기</button>
-      <button id="exampleBtn">예시 넣기</button>
-      <button id="clearBtn">초기화</button>
-    </div>
-
-    <div class="status" id="status"></div>
-  </section>
+textarea{width:100%;min-height:240px;border:2px solid #222;border-radius:18px;padding:16px;font:inherit;font-size:17px;line-height:1.7;resize:vertical}
+.counter{text-align:right;font-size:13px;color:#777}.actions{margin-top:18px}.status{margin-top:12px;min-height:24px;font-weight:700}
+.badge{padding:4px 9px;border:1px solid #222;border-radius:999px;background:#f4f4f4;font-size:12px;font-weight:700}
+.table{width:100%;border-collapse:collapse}.table th,.table td{padding:9px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}
+.note{color:#666;line-height:1.7}.samples{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:5px 8px;border:1px solid #bbb;border-radius:999px;font-size:12px;background:#fafafa}
+</style></head>
+<body><div class="wrap">
+<section class="hero"><h1>우사기의 비밀대화</h1></section>
+<section class="card">
+<div class="tabs"><button class="tab active" data-mode="encode">우사기 언어로</button><button class="tab" data-mode="decode">사람 언어로</button></div>
+<div class="row">
+<div><label id="inputLabel">메시지</label><textarea id="input" maxlength="80" placeholder="메시지를 입력해줘"></textarea><div class="counter" id="countWrap"><span id="counter">0</span> / 80</div></div>
+<div><label id="outputLabel">우사기 언어</label><textarea id="output" readonly placeholder="여기에 결과가 나와"></textarea></div>
 </div>
+<div class="actions"><button class="primary" id="go">우사기 언어로 바꾸기</button><button id="copy">결과 복사</button><button id="swap">반대로 바꾸기</button><button id="example">예시 넣기</button><button id="clear">초기화</button></div>
+<div class="status" id="status"></div>
+</section>
+</div><script>
+const TOKENS=["야하", "우라", "푸루야", "푸루", "우-라-", "하아", "후응", "쥬르리", "우라라라라라라라라", "야아아아아앗", "하아아아아앗", "야하야하야하", "야핫", "으핫", "푸루루루루루", "야푸", "미야아아", "후으-응", "우-이-", "이-", "하앗핫", "유후후후후후후후후후", "우아", "야하!", "우라!", "푸루야!", "푸루!", "우-라-!", "하아!", "후응!", "쥬르리!", "우라라라라라라라라!", "야아아아아앗!", "하아아아아앗!", "야하야하야하!", "야핫!", "으핫!", "푸루루루루루!", "야푸!", "미야아아!", "후으-응!", "우-이-!", "이-!", "하앗핫!", "유후후후후후후후후후!", "우아!", "야하!!", "우라!!", "푸루야!!", "푸루!!", "우-라-!!", "하아!!", "후응!!", "쥬르리!!", "우라라라라라라라라!!", "야아아아아앗!!", "하아아아아앗!!", "야하야하야하!!", "야핫!!", "으핫!!", "푸루루루루루!!", "야푸!!", "미야아아!!", "후으-응!!", "우-이-!!", "이-!!", "하앗핫!!", "유후후후후후후후후후!!", "우아!!", "야하!!!", "우라!!!", "푸루야!!!", "푸루!!!", "우-라-!!!", "하아!!!", "후응!!!", "쥬르리!!!", "우라라라라라라라라!!!", "야아아아아앗!!!", "하아아아아앗!!!", "야하야하야하!!!", "야핫!!!", "으핫!!!", "푸루루루루루!!!", "야푸!!!", "미야아아!!!", "후으-응!!!", "우-이-!!!", "이-!!!", "하앗핫!!!", "유후후후후후후후후후!!!", "우아!!!", "야하~", "우라~", "푸루야~", "푸루~", "우-라-~", "하아~", "후응~", "쥬르리~", "우라라라라라라라라~", "야아아아아앗~", "하아아아아앗~", "야하야하야하~", "야핫~", "으핫~", "푸루루루루루~", "야푸~", "미야아아~", "후으-응~", "우-이-~", "이-~", "하앗핫~", "유후후후후후후후후후~", "우아~", "야하~~", "우라~~", "푸루야~~", "푸루~~", "우-라-~~", "하아~~", "후응~~", "쥬르리~~", "우라라라라라라라라~~", "야아아아아앗~~", "하아아아아앗~~", "야하야하야하~~", "야핫~~", "으핫~~", "푸루루루루루~~", "야푸~~", "미야아아~~", "후으-응~~", "우-이-~~", "이-~~", "하앗핫~~", "유후후후후후후후후후~~", "우아~~", "야하...", "우라...", "푸루야...", "푸루...", "우-라-...", "하아...", "후응...", "쥬르리...", "우라라라라라라라라...", "야아아아아앗...", "하아아아아앗...", "야하야하야하...", "야핫...", "으핫...", "푸루루루루루...", "야푸...", "미야아아...", "후으-응...", "우-이-...", "이-...", "하앗핫...", "유후후후후후후후후후...", "우아...", "야하?", "우라?", "푸루야?", "푸루?", "우-라-?", "하아?", "후응?", "쥬르리?", "우라라라라라라라라?", "야아아아아앗?", "하아아아아앗?", "야하야하야하?", "야핫?", "으핫?", "푸루루루루루?", "야푸?", "미야아아?", "후으-응?", "우-이-?", "이-?", "하앗핫?", "유후후후후후후후후후?", "우아?", "야하!?", "우라!?", "푸루야!?", "푸루!?", "우-라-!?", "하아!?", "후응!?", "쥬르리!?", "우라라라라라라라라!?", "야아아아아앗!?", "하아아아아앗!?", "야하야하야하!?", "야핫!?", "으핫!?", "푸루루루루루!?", "야푸!?", "미야아아!?", "후으-응!?", "우-이-!?", "이-!?", "하앗핫!?", "유후후후후후후후후후!?", "우아!?", "야하♪", "우라♪", "푸루야♪", "푸루♪", "우-라-♪", "하아♪", "후응♪", "쥬르리♪", "우라라라라라라라라♪", "야아아아아앗♪", "하아아아아앗♪", "야하야하야하♪", "야핫♪", "으핫♪", "푸루루루루루♪", "야푸♪", "미야아아♪", "후으-응♪", "우-이-♪", "이-♪", "하앗핫♪", "유후후후후후후후후후♪", "우아♪", "야하♡", "우라♡", "푸루야♡", "푸루♡", "우-라-♡", "하아♡", "후응♡", "쥬르리♡", "우라라라라라라라라♡", "야아아아아앗♡", "하아아아아앗♡", "야하야하야하♡", "야핫♡", "으핫♡", "푸루루루루루♡", "야푸♡", "미야아아♡", "후으-응♡", "우-이-♡", "이-♡", "하앗핫♡", "유후후후후후후후후후♡", "우아♡", "야하☆", "우라☆", "푸루야☆"];
+const REV=new Map(TOKENS.map((t,i)=>[t,i]));
+const DICT=["오늘", "내일", "지금", "점심", "저녁", "출근", "퇴근", "야근", "회사", "회의", "업무", "마감", "일정", "휴가", "연차", "학교", "수업", "과제", "시험", "공부", "도서관", "조별과제", "카페", "지하철", "버스", "밥 먹자", "뭐 먹지", "배고파", "커피", "뭐해", "뭐 해", "어디야", "어디야?", "만나자", "보자", "가자", "갈까", "연락해", "기다려", "좋아", "싫어", "귀찮아", "피곤해", "졸려", "힘들어", "대박", "헐", "진짜", "고마워", "미안", "괜찮아", "사랑해", "잘자", "안녕", "ㅋㅋ", "ㅋㅋㅋ", "ㅋㅋㅋㅋ", "ㅎㅎ", "ㅠㅠ", "ㅜㅜ", "ㅇㅇ", "ㄴㄴ", "ㄱㄱ", "오케이", "ㅇㅋ", "퇴근하고", "수업 끝나고", "회의 끝나고", "시험 끝나고", "집에 가자", "집에 가고 싶다", "일하기 싫다", "오늘 뭐해", "내일 뭐해", "지금 어디야", "점심 먹자", "저녁 먹자", "퇴근하면", "도착하면", "연락줘", "곧 도착", "지금 출발", "주말에 뭐해", "이번 주", "다음 주", "수고했어", "감사합니다", "퇴근하자", "공부하기 싫다", "시험 망했다", "과제 하기 싫다", "집 가고 싶다", "밥 먹었어", "밥 먹었어?", "한잔 할래"];
+const DREV=new Map(DICT.map((w,i)=>[w,i]));
+const SDICT=[...DICT].sort((a,b)=>b.length-a.length);
 
-<script>
-
-const ROOTS=["야하","우라","우랴","우라라","푸루루","후웅","하아","이야하",
-             "야하하","우랴랴","푸루야","우라앗","야핫","후우웅","하아아","우라야"];
-const MID=["","!","!!","!?","☆","★","♡","♥","♪","♬","↗","↘","!☆","!♡","!♪","!↗"];
-const END=["","!","!!",".","..","...","?","!?","~","☆","★","♡","♥","♩","♪","♬"];
-
-function buildTokens(){
+// 0..127 ASCII direct
+// 128..171 Hangul page prefix
+// 172..253 dictionary prefix
+// 254 arbitrary Unicode escape
+// 255 reserved
+function encodeCodes(text){
   const out=[];
-  // 같은 계열이 몰리지 않도록 ROOTS를 가장 안쪽에서 순환시킨다.
-  // 0=야하, 1=우라, 2=우랴 ... 15=우라야, 16부터 다시 다른 변형으로 반복.
-  for(const m of MID){
-    for(const e of END){
-      for(const r of ROOTS){
-        const split=Math.max(1,Math.floor(r.length/2));
-        const a=r.slice(0,split), b=r.slice(split);
-        out.push(a+m+b+e);
-      }
-    }
-  }
-  if(out.length!==4096) throw new Error("토큰 생성 실패");
-  return out;
-}
-const TOKENS=buildTokens();
-const TOKEN_TO_CODE=new Map(TOKENS.map((t,i)=>[t,i]));
-
-const DICT=[
-"오늘","내일","어제","지금","나중에","아침","점심","저녁","밤","주말",
-"출근","퇴근","야근","회사","사무실","회의","미팅","업무","일하기","일","팀장","과장","부장","대리","사원",
-"보고서","메일","메신저","전화","자료","마감","일정","휴가","연차","월요일","화요일","수요일","목요일","금요일",
-"학교","수업","강의","교수님","선생님","과제","숙제","시험","중간고사","기말고사","공부","도서관","학원","발표","조별과제",
-"친구","선배","후배","동기","집","집에","학교에","회사에","카페","식당","편의점","지하철","버스","역","앞에서",
-"밥","밥먹자","밥 먹자","뭐먹지","뭐 먹지","배고파","배고프다","커피","술","맥주","소주","한잔","치킨","피자",
-"뭐해","뭐 해","어디야","어디야?","언제와","언제 와","몇시","몇 시","만나자","보자","가자","갈까","올래","갈래",
-"늦어","늦을듯","도착","출발","연락해","전화해","카톡해","기다려","잠깐","빨리","천천히",
-"좋아","싫어","귀찮아","피곤해","졸려","힘들어","재밌다","웃기다","미쳤다","대박","헐","진짜","아니","맞아","몰라",
-"고마워","미안","괜찮아","축하해","사랑해","보고싶어","보고 싶어","잘자","잘 자","굿나잇","안녕","안녕하세요",
-"ㅋㅋ","ㅋㅋㅋ","ㅋㅋㅋㅋ","ㅎㅎ","ㅎㅎㅎ","ㅠㅠ","ㅜㅜ","ㅇㅇ","ㄴㄴ","ㄱㄱ","오케이","ㅇㅋ","ㄱㅅ","ㅈㅅ",
-"가능","불가능","확인","완료","성공","실패","문제","에러","버그","테스트","배포","서버","개발","기획","디자인",
-"퇴근하고","끝나고","수업 끝나고","회의 끝나고","시험 끝나고","집에 가자","집에 가고 싶다","일하기 싫다",
-"오늘 뭐해","오늘 뭐 해","내일 뭐해","내일 뭐 해","지금 어디야","지금 어디야?","점심 먹자","저녁 먹자",
-"퇴근하면","끝나면","도착하면","연락 줘","연락줘","전화 줘","전화줘","조금 늦어","곧 도착","지금 출발",
-"주말에 뭐해","주말에 뭐 해","이번주","다음주","이번 주","다음 주","이번달","다음달","이번 달","다음 달"
-];
-
-const dictCode=new Map();
-const codeDict=new Map();
-DICT.forEach((w,i)=>{dictCode.set(w,256+i); codeDict.set(256+i,w);});
-const SORTED_DICT=[...DICT].sort((a,b)=>b.length-a.length);
-
-function encodeToCodes(text){
-  const codes=[];
   let i=0;
   while(i<text.length){
     let found=null;
-    for(const word of SORTED_DICT){
-      if(text.startsWith(word,i)){found=word;break;}
+    for(const w of SDICT){
+      if(text.startsWith(w,i)){found=w;break;}
     }
     if(found){
-      codes.push(dictCode.get(found));
+      const di=DREV.get(found);
+      out.push(172+Math.floor(di/256), di%256);
       i+=found.length;
       continue;
     }
+
     const cp=text.codePointAt(i);
     const ch=String.fromCodePoint(cp);
-    const bytes=new TextEncoder().encode(ch);
-    for(const b of bytes) codes.push(b);
+
+    if(cp<=127){
+      out.push(cp);
+    } else if(cp>=0xAC00 && cp<=0xD7A3){
+      const idx=cp-0xAC00;
+      out.push(128+Math.floor(idx/256), idx%256);
+    } else {
+      out.push(254,(cp>>16)&255,(cp>>8)&255,cp&255);
+    }
     i+=ch.length;
   }
-  return codes;
+  return out;
 }
-function encodeText(text){
-  return encodeToCodes(text).map(c=>TOKENS[c]).join(" ");
+
+function enc(text){
+  return encodeCodes(text).map(c=>TOKENS[c]).join(" ");
 }
-function decodeText(encoded){
+
+function dec(encoded){
   const parts=encoded.trim().split(/\s+/).filter(Boolean);
-  if(!parts.length) return "";
   let out="";
-  let bytes=[];
-  function flushBytes(){
-    if(!bytes.length) return;
-    out+=new TextDecoder("utf-8",{fatal:true}).decode(new Uint8Array(bytes));
-    bytes=[];
-  }
-  for(const t of parts){
-    const code=TOKEN_TO_CODE.get(t);
-    if(code===undefined) throw new Error("알 수 없는 토큰: "+t);
-    if(code<256){
-      bytes.push(code);
-    }else if(codeDict.has(code)){
-      flushBytes();
-      out+=codeDict.get(code);
-    }else{
-      throw new Error("현재 버전에서 사용하지 않는 압축 코드야.");
+  for(let i=0;i<parts.length;i++){
+    const c=REV.get(parts[i]);
+    if(c===undefined) throw Error("알 수 없는 우사기 언어가 있어.");
+
+    if(c<=127){
+      out+=String.fromCharCode(c);
+    } else if(c>=128 && c<=171){
+      if(i+1>=parts.length) throw Error("한글 코드가 중간에 끊겼어.");
+      const lo=REV.get(parts[++i]);
+      if(lo===undefined) throw Error("한글 코드가 올바르지 않아.");
+      const idx=(c-128)*256+lo;
+      if(idx>=11172) throw Error("잘못된 한글 코드야.");
+      out+=String.fromCharCode(0xAC00+idx);
+    } else if(c>=172 && c<=253){
+      if(i+1>=parts.length) throw Error("단어 코드가 중간에 끊겼어.");
+      const lo=REV.get(parts[++i]);
+      if(lo===undefined) throw Error("단어 코드가 올바르지 않아.");
+      const di=(c-172)*256+lo;
+      if(di>=DICT.length) throw Error("등록되지 않은 단어 코드야.");
+      out+=DICT[di];
+    } else if(c===254){
+      if(i+3>=parts.length) throw Error("특수문자 코드가 중간에 끊겼어.");
+      const a=REV.get(parts[++i]),b=REV.get(parts[++i]),d=REV.get(parts[++i]);
+      if(a===undefined||b===undefined||d===undefined) throw Error("특수문자 코드가 올바르지 않아.");
+      out+=String.fromCodePoint((a<<16)|(b<<8)|d);
+    } else {
+      throw Error("예약된 코드야.");
     }
   }
-  flushBytes();
   return out;
 }
 
 let mode="encode";
-const $=id=>document.getElementById(id);
-const input=$("input"), output=$("output"), status=$("status"), counter=$("counter");
-const convertBtn=$("convertBtn"), copyBtn=$("copyBtn"), swapBtn=$("swapBtn"), exampleBtn=$("exampleBtn"), clearBtn=$("clearBtn");
-const inputLabel=$("inputLabel"), outputLabel=$("outputLabel");
-const tabs=[...document.querySelectorAll(".tab")];
-
-function updateCounter(){
-  if(mode==="encode") counter.textContent=[...input.value].length;
-  else counter.textContent=input.value.length;
-}
-
-function setMode(next){
-  mode=next;
-  tabs.forEach(t=>t.classList.toggle("active", t.dataset.mode===mode));
-  if(mode==="encode"){
-    inputLabel.textContent="메시지";
-    outputLabel.textContent="우사기 언어";
-    input.maxLength=80;
-    input.placeholder="메시지를 입력해줘";
-    convertBtn.textContent="우사기 언어로 바꾸기";
-    document.querySelector(".counter").style.display="block";
-  } else {
-    inputLabel.textContent="우사기 언어";
-    outputLabel.textContent="사람 언어";
-    input.removeAttribute("maxlength");
-    input.placeholder="우사기 언어를 붙여넣어";
-    convertBtn.textContent="사람 언어로 바꾸기";
-    document.querySelector(".counter").style.display="none";
+const $=x=>document.getElementById(x),input=$("input"),output=$("output"),status=$("status"),counter=$("counter"),stats=$("stats");
+function setMode(m){
+  mode=m;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.mode===m));
+  if(m==="encode"){
+    input.maxLength=80;input.placeholder="메시지를 입력해줘";
+    $("inputLabel").textContent="메시지";$("outputLabel").textContent="우사기 언어";
+    $("go").textContent="우사기 언어로 바꾸기";$("countWrap").style.display="block";
+  }else{
+    input.removeAttribute("maxlength");input.placeholder="우사기 언어를 붙여넣어";
+    $("inputLabel").textContent="우사기 언어";$("outputLabel").textContent="사람 언어";
+    $("go").textContent="사람 언어로 바꾸기";$("countWrap").style.display="none";
   }
-  output.value="";
-  status.textContent="";
-  updateCounter();
+  output.value="";status.textContent="";if(stats)stats.innerHTML="";
 }
-
-tabs.forEach(t=>t.addEventListener("click",()=>setMode(t.dataset.mode)));
-input.addEventListener("input", updateCounter);
-
-convertBtn.addEventListener("click",()=>{
+document.querySelectorAll(".tab").forEach(x=>x.onclick=()=>setMode(x.dataset.mode));
+input.oninput=()=>counter.textContent=[...input.value].length;
+$("go").onclick=()=>{
   try{
     if(mode==="encode"){
-      output.value=encodeText(input.value);
+      const c=encodeCodes(input.value);
+      output.value=c.map(x=>TOKENS[x]).join(" ");
       status.textContent="우사기 언어로 바꿨어!";
-    } else {
-      output.value=decodeText(input.value);
+      if(stats)stats.innerHTML=`<span class="badge">출력 토큰 ${c.length}개</span><span class="badge">말투 토큰 256개</span>`;
+    }else{
+      output.value=dec(input.value);
       status.textContent="사람 언어로 바꿨어!";
     }
-  }catch(e){
-    output.value="";
-    status.textContent="오류: "+e.message;
-  }
-});
-
-copyBtn.addEventListener("click", async ()=>{
-  if(!output.value){status.textContent="복사할 결과가 없어.";return;}
-  try{await navigator.clipboard.writeText(output.value);status.textContent="복사했어!";}
-  catch{output.select();document.execCommand("copy");status.textContent="복사했어!";}
-});
-
-swapBtn.addEventListener("click", ()=>{
-  if(!output.value){status.textContent="먼저 변환해줘.";return;}
-  const prev=output.value;
-  setMode(mode==="encode"?"decode":"encode");
-  input.value=prev;
-  updateCounter();
-  status.textContent="반대쪽으로 옮겼어.";
-});
-
-exampleBtn.addEventListener("click", ()=>{
-  input.value = mode==="encode"
-    ? "오늘 퇴근하면 저녁 먹자 ㅋㅋ"
-    : encodeText("내일 수업 끝나고 카페 갈래?");
-  output.value="";
-  status.textContent="예시를 넣었어.";
-  updateCounter();
-});
-
-clearBtn.addEventListener("click", ()=>{
-  input.value=""; output.value=""; status.textContent=""; updateCounter(); input.focus();
-});
-
-updateCounter();
-</script>
-</body>
-</html>
+  }catch(e){status.textContent="오류: "+e.message}
+};
+$("copy").onclick=async()=>{
+  if(!output.value)return status.textContent="복사할 결과가 없어.";
+  try{await navigator.clipboard.writeText(output.value);status.textContent="복사했어!"}catch{status.textContent="복사 실패"}
+};
+$("swap").onclick=()=>{
+  if(!output.value)return;
+  const v=output.value;setMode(mode==="encode"?"decode":"encode");input.value=v;
+};
+$("example").onclick=()=>{
+  input.value=mode==="encode"?"오늘 퇴근하면 저녁 먹자 ㅋㅋ":enc("내일 수업 끝나고 카페 갈래?");
+  counter.textContent=[...input.value].length;
+};
+$("clear").onclick=()=>{
+  input.value="";output.value="";status.textContent="";counter.textContent="0";if(stats)stats.innerHTML="";
+};
+</script></body></html>
