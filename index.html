@@ -273,12 +273,12 @@ textarea:focus{border-color:#efd274; box-shadow:0 0 0 5px rgba(255,224,121,.28)}
       </div>
 
       <div class="status" id="status"></div>
-      <div class="footer-note">5천개 일상 대화 압축 사전과 채팅 축약어 그대로 표시 규칙을 적용했어요.</div>
+      <div class="footer-note">5천개 일상 대화 압축 사전과 ㅇㅇ·ㅋㅋ·특수문자·공백 완전 패스스루 규칙을 적용했어요.</div>
     </section>
   </div>
 </div>
 <script>
-// 우사기 언어 v8
+// 우사기 언어 v8.3
 // 5,000개 일상 대화 압축 사전 + 32개 우사기 토큰
 // ㅋㅋ/ㅎㅎ/ㅇㅇ 등 채팅 축약어는 변환하지 않고 그대로 표시
 
@@ -303,8 +303,13 @@ for(const arr of BY_FIRST.values()){
 
 // 그대로 보여줄 채팅 표현.
 // 길게 반복된 ㅋㅋㅋㅋ / ㅎㅎㅎㅎ / ㅠㅠㅠ 등도 통째로 유지.
-const PASS_RE = /(ㅋ{2,}|ㅎ{2,}|ㅠ{2,}|ㅜ{2,}|ㅇㅇ|ㄴㄴ|ㄱㄱ|ㄷㄷ|ㅂㅂ|ㅈㅅ|ㅇㅋ|ㅎㅇ|ㅊㅋ)/g;
-const PASS_EXACT = /^(ㅋ{2,}|ㅎ{2,}|ㅠ{2,}|ㅜ{2,}|ㅇㅇ|ㄴㄴ|ㄱㄱ|ㄷㄷ|ㅂㅂ|ㅈㅅ|ㅇㅋ|ㅎㅇ|ㅊㅋ)$/;
+// 채팅 축약어 + 특수문자는 ㅇㅇ/ㅋㅋ처럼 인코딩 대상에서 완전히 제외하고 원문 그대로 표시.
+// 특수문자에는 ! ? ~ . , @ # $ % ^ & * ( ) - _ + = / \ : ; 따옴표, 기호, 이모지 등을 포함한다.
+// 한글/영문/숫자/공백만 변환 대상으로 본다.
+const CHAT_PASS = String.raw`ㅋ{2,}|ㅎ{2,}|ㅠ{2,}|ㅜ{2,}|ㅇㅇ|ㄴㄴ|ㄱㄱ|ㄷㄷ|ㅂㅂ|ㅈㅅ|ㅇㅋ|ㅎㅇ|ㅊㅋ`;
+const SPECIAL_PASS = String.raw`[^가-힣ㄱ-ㅎㅏ-ㅣA-Za-z0-9\s]+|[ \t\r\n]+`;
+const PASS_RE = new RegExp(`(${CHAT_PASS}|${SPECIAL_PASS})`, "gu");
+const PASS_EXACT = new RegExp(`^(?:${CHAT_PASS}|${SPECIAL_PASS})$`, "u");
 
 function bytesTo5(bytes){
   const out=[]; let acc=0,bits=0;
@@ -398,7 +403,7 @@ function decompressText(bytes){
 function encodeBlock(text){
   if(!text) return "";
   const bytes=compressText(text);
-  return bytesTo5(bytes).map(v=>TOKENS[v]).join(" ");
+  return bytesTo5(bytes).map(v=>TOKENS[v]).join("\u00A0");
 }
 
 function decodeBlock(tokenParts){
@@ -411,31 +416,41 @@ function decodeBlock(tokenParts){
 }
 
 function enc(text){
-  // PASS_RE를 캡처 그룹으로 split해서 위치를 그대로 보존.
-  const parts=text.split(PASS_RE);
   const out=[];
+  let last=0;
 
-  for(const part of parts){
-    if(!part) continue;
+  // 매번 새 정규식 상태에서 왼쪽→오른쪽으로 패스스루 구간을 직접 분리한다.
+  PASS_RE.lastIndex=0;
+  let m;
 
-    if(PASS_EXACT.test(part)){
-      // 구조용 공백과 구분되도록 literal은 그대로 한 덩어리로 둠.
-      out.push(part);
-    }else{
-      const block=encodeBlock(part);
+  while((m=PASS_RE.exec(text))!==null){
+    if(m.index>last){
+      const normal=text.slice(last,m.index);
+      const block=encodeBlock(normal);
       if(block) out.push(block);
     }
+
+    // ㅋㅋ/ㅎㅎ/ㅇㅇ/특수문자는 절대 encodeBlock()으로 보내지 않는다.
+    out.push(m[0]);
+    last=m.index+m[0].length;
   }
 
-  return out.join(" ");
+  if(last<text.length){
+    const normal=text.slice(last);
+    const block=encodeBlock(normal);
+    if(block) out.push(block);
+  }
+
+  return out.join("\u2063");
 }
 
 function dec(encoded){
-  const parts=encoded.trim().split(/\s+/).filter(Boolean);
-  if(!parts.length) return "";
+  if(!encoded) return "";
 
+  const TOKEN_BY_LENGTH=[...TOKENS].sort((a,b)=>b.length-a.length);
   let out="";
   let block=[];
+  let i=0;
 
   const flush=()=>{
     if(block.length){
@@ -444,15 +459,58 @@ function dec(encoded){
     }
   };
 
-  for(const p of parts){
-    if(REV.has(p)){
-      block.push(p);
-    }else if(PASS_EXACT.test(p)){
-      flush();
-      out+=p;
-    }else{
-      throw Error("알 수 없는 문자열이 섞여 있어: "+p);
+  while(i<encoded.length){
+    const ch=encoded[i];
+
+    // 우사기 토큰 사이의 보이지 않는/비가시적 구분자
+    if(ch==="\u00A0"){
+      i++;
+      continue;
     }
+    if(ch==="\u2063"){
+      flush();
+      i++;
+      continue;
+    }
+
+    // 입력에서 그대로 통과시킨 공백
+    if(/[ \t\r\n]/.test(ch)){
+      flush();
+      out+=ch;
+      i++;
+      continue;
+    }
+
+    // 입력에서 그대로 통과시킨 채팅 축약어
+    const rest=encoded.slice(i);
+    const chat=rest.match(new RegExp(`^(?:${CHAT_PASS})`,"u"));
+    if(chat){
+      flush();
+      out+=chat[0];
+      i+=chat[0].length;
+      continue;
+    }
+
+    // 우사기 토큰은 긴 표현부터 매칭
+    let token=null;
+    for(const t of TOKEN_BY_LENGTH){
+      if(encoded.startsWith(t,i)){
+        token=t;
+        break;
+      }
+    }
+    if(token){
+      block.push(token);
+      i+=token.length;
+      continue;
+    }
+
+    // 토큰이 아니면 특수문자/이모지 등 원문 패스스루로 처리
+    const cp=encoded.codePointAt(i);
+    const literal=String.fromCodePoint(cp);
+    flush();
+    out+=literal;
+    i+=literal.length;
   }
 
   flush();
@@ -509,7 +567,7 @@ $("go").onclick=()=>{
     if(mode==="encode"){
       output.value=enc(input.value);
       const count=output.value ? output.value.split(/\s+/).filter(x=>REV.has(x)).length : 0;
-      status.textContent=`우사기 언어로 바꿨어! · ${count}토큰 · 5천개 일상 사전`;
+      status.textContent=`우사기 언어로 바꿨어! · ${count}토큰 · v8.3`;
     }else{
       output.value=dec(input.value);
       status.textContent="사람 언어로 바꿨어!";
@@ -553,15 +611,26 @@ $("clear").onclick=()=>{
   counter.textContent="0";
 };
 
+// 패스스루 검증
+if(enc(" ")!==" ") throw Error("공백 패스스루 실패");
+if(dec(enc("오늘 뭐해 ㅋㅋ"))!=="오늘 뭐해 ㅋㅋ") throw Error("공백 포함 문장 왕복 실패");
+if(dec(enc("진짜?! ㅋㅋ"))!=="진짜?! ㅋㅋ") throw Error("특수문자+공백 왕복 실패");
+if(enc("ㅋㅋ")!=="ㅋㅋ") throw Error("ㅋㅋ 패스스루 실패");
+if(enc("ㅎㅎ")!=="ㅎㅎ") throw Error("ㅎㅎ 패스스루 실패");
+if(enc("ㅇㅇ")!=="ㅇㅇ") throw Error("ㅇㅇ 패스스루 실패");
+if(!enc("오늘 뭐해 ㅋㅋ").endsWith("ㅋㅋ")) throw Error("문장 속 ㅋㅋ 패스스루 실패");
+if(!enc("진짜?!").includes("?!")) throw Error("특수문자 패스스루 실패");
+
 // 왕복 검증
 [
-  "오늘 퇴근하고 뭐해 ㅋㅋ",
-  "내일 밥 먹자 ㅎㅎ",
+  "오늘 퇴근하고 뭐해 ㅋㅋ!!!",
+  "내일 밥 먹자 ㅎㅎ~♡",
   "지금 어디야 ㅇㅇ",
   "렌더링 테스트가 뭐야?",
   "Hello ㅋㅋ",
   "日本語 ㅎㅎ",
-  "우사기🐰 ㄱㄱ"
+  "우사기🐰 ㄱㄱ",
+  "진짜?!! @#$%^&* ☆♪"
 ].forEach(s=>{
   const e=enc(s);
   const d=dec(e);
