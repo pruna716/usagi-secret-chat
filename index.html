@@ -273,131 +273,155 @@ textarea:focus{border-color:#efd274; box-shadow:0 0 0 5px rgba(255,224,121,.28)}
       </div>
 
       <div class="status" id="status"></div>
-      <div class="footer-note">업로드한 우사기 이미지로 적용했고, 기존 기능과 버튼은 그대로 유지했어요.</div>
+      <div class="footer-note">쥬르리를 제거하고 느낌표 변형을 늘린 32개 우사기 표현을 적용했어요.</div>
     </section>
   </div>
 </div>
 <script>
-const TOKENS=["야하", "우라", "푸루야", "푸루", "우-라-", "하아", "후응", "쥬르리", "우라라라라라라라라", "야아아아아앗", "하아아아아앗", "야하야하야하", "야핫", "으핫", "푸루루루루루", "야푸", "미야아아", "후으-응", "우-이-", "이-", "하앗핫", "유후후후후후후후후후", "우아", "야하!", "우라!", "푸루야!", "푸루!", "우-라-!", "하아!", "후응!", "쥬르리!", "우라라라라라라라라!", "야아아아아앗!", "하아아아아앗!", "야하야하야하!", "야핫!", "으핫!", "푸루루루루루!", "야푸!", "미야아아!", "후으-응!", "우-이-!", "이-!", "하앗핫!", "유후후후후후후후후후!", "우아!", "야하!!", "우라!!", "푸루야!!", "푸루!!", "우-라-!!", "하아!!", "후응!!", "쥬르리!!", "우라라라라라라라라!!", "야아아아아앗!!", "하아아아아앗!!", "야하야하야하!!", "야핫!!", "으핫!!", "푸루루루루루!!", "야푸!!", "미야아아!!", "후으-응!!", "우-이-!!", "이-!!", "하앗핫!!", "유후후후후후후후후후!!", "우아!!", "야하!!!", "우라!!!", "푸루야!!!", "푸루!!!", "우-라-!!!", "하아!!!", "후응!!!", "쥬르리!!!", "우라라라라라라라라!!!", "야아아아아앗!!!", "하아아아아앗!!!", "야하야하야하!!!", "야핫!!!", "으핫!!!", "푸루루루루루!!!", "야푸!!!", "미야아아!!!", "후으-응!!!", "우-이-!!!", "이-!!!", "하앗핫!!!", "유후후후후후후후후후!!!", "우아!!!", "야하~", "우라~", "푸루야~", "푸루~", "우-라-~", "하아~", "후응~", "쥬르리~", "우라라라라라라라라~", "야아아아아앗~", "하아아아아앗~", "야하야하야하~", "야핫~", "으핫~", "푸루루루루루~", "야푸~", "미야아아~", "후으-응~", "우-이-~", "이-~", "하앗핫~", "유후후후후후후후후후~", "우아~", "야하~~", "우라~~", "푸루야~~", "푸루~~", "우-라-~~", "하아~~", "후응~~", "쥬르리~~", "우라라라라라라라라~~", "야아아아아앗~~", "하아아아아앗~~", "야하야하야하~~", "야핫~~", "으핫~~", "푸루루루루루~~", "야푸~~", "미야아아~~", "후으-응~~", "우-이-~~", "이-~~", "하앗핫~~", "유후후후후후후후후후~~", "우아~~", "야하...", "우라...", "푸루야...", "푸루...", "우-라-...", "하아...", "후응...", "쥬르리...", "우라라라라라라라라...", "야아아아아앗...", "하아아아아앗...", "야하야하야하...", "야핫...", "으핫...", "푸루루루루루...", "야푸...", "미야아아...", "후으-응...", "우-이-...", "이-...", "하앗핫...", "유후후후후후후후후후...", "우아...", "야하?", "우라?", "푸루야?", "푸루?", "우-라-?", "하아?", "후응?", "쥬르리?", "우라라라라라라라라?", "야아아아아앗?", "하아아아아앗?", "야하야하야하?", "야핫?", "으핫?", "푸루루루루루?", "야푸?", "미야아아?", "후으-응?", "우-이-?", "이-?", "하앗핫?", "유후후후후후후후후후?", "우아?", "야하!?", "우라!?", "푸루야!?", "푸루!?", "우-라-!?", "하아!?", "후응!?", "쥬르리!?", "우라라라라라라라라!?", "야아아아아앗!?", "하아아아아앗!?", "야하야하야하!?", "야핫!?", "으핫!?", "푸루루루루루!?", "야푸!?", "미야아아!?", "후으-응!?", "우-이-!?", "이-!?", "하앗핫!?", "유후후후후후후후후후!?", "우아!?", "야하♪", "우라♪", "푸루야♪", "푸루♪", "우-라-♪", "하아♪", "후응♪", "쥬르리♪", "우라라라라라라라라♪", "야아아아아앗♪", "하아아아아앗♪", "야하야하야하♪", "야핫♪", "으핫♪", "푸루루루루루♪", "야푸♪", "미야아아♪", "후으-응♪", "우-이-♪", "이-♪", "하앗핫♪", "유후후후후후후후후후♪", "우아♪", "야하♡", "우라♡", "푸루야♡", "푸루♡", "우-라-♡", "하아♡", "후응♡", "쥬르리♡", "우라라라라라라라라♡", "야아아아아앗♡", "하아아아아앗♡", "야하야하야하♡", "야핫♡", "으핫♡", "푸루루루루루♡", "야푸♡", "미야아아♡", "후으-응♡", "우-이-♡", "이-♡", "하앗핫♡", "유후후후후후후후후후♡", "우아♡", "야하☆", "우라☆", "푸루야☆"];
+// 우사기 언어 v7.1
+// - 32개 토큰만 사용
+// - 하트(♡/♥), 점(.)/말줄임표(...) 제거
+// - 실제 우사기 느낌이 나는 표현 + 자연스러운 변형만 사용
+// - UTF-8 바이트를 5bit(Base32) 단위로 매핑
+// - 입력 내용/언어/단어에 관계없이 동일 방식으로 왕복 가능
 
-const REV=new Map(TOKENS.map((t,i)=>[t,i]));
-
-// v5 dictionary: common chat words + the old v4 vocabulary.
-// One dictionary hit = one Usagi token.
-const DICT=[
-  "렌더링","테스트","안녕하세요","감사합니다","사랑해","괜찮아","진짜","완전",
-  "ㅋㅋㅋㅋ","ㅋㅋㅋ","ㅎㅎㅎ","뭐야","어떻게","그리고","그래서","하지만",
-  "오늘","내일","지금","점심","저녁","출근","퇴근","야근","회사","회의","업무","마감","일정","휴가","연차",
-  "학교","수업","과제","시험","공부","도서관","조별과제","카페","지하철","버스",
-  "밥 먹자","뭐 먹지","배고파","커피","뭐해","뭐 해","어디야","어디야?","만나자","보자","가자","갈까",
-  "연락해","기다려","좋아","싫어","귀찮아","피곤해","졸려","힘들어","대박","헐","고마워","미안","잘자","안녕",
-  "ㅋㅋ","ㅎㅎ","ㅠㅠ","ㅜㅜ","ㅇㅇ","ㄴㄴ","ㄱㄱ","오케이","ㅇㅋ",
-  "퇴근하고","수업 끝나고","회의 끝나고","시험 끝나고","집에 가자","집에 가고 싶다","일하기 싫다",
-  "오늘 뭐해","내일 뭐해","지금 어디야","점심 먹자","저녁 먹자","퇴근하면","도착하면","연락줘","곧 도착","지금 출발",
-  "주말에 뭐해","이번 주","다음 주","수고했어","퇴근하자","공부하기 싫다","시험 망했다","과제 하기 싫다",
-  "집 가고 싶다","밥 먹었어","밥 먹었어?","한잔 할래",
-  "모달","클릭","입력","출력","변환","복원","우사기","크롬","사이트","성능","느려","정상","오류","가능","필요","사용","결과"
+const TOKENS = [
+  "야하",
+  "야하!",
+  "야하!!",
+  "우라",
+  "우라!",
+  "우라!!",
+  "푸루야",
+  "푸루야!",
+  "푸루야!!",
+  "푸루",
+  "푸루!",
+  "푸루!!",
+  "우-라-",
+  "우-라-!",
+  "우-라-!!",
+  "하아?",
+  "하아!?",
+  "하아!!",
+  "후응",
+  "후응!",
+  "후응!!",
+  "우라라라라라라라라!",
+  "우라라라라라라라라!!",
+  "야아아아아앗!",
+  "야아아아아앗!!",
+  "하아아아아앗!",
+  "하아아아아앗!!",
+  "야핫",
+  "야핫!",
+  "야핫!!",
+  "야푸",
+  "야푸!"
 ];
 
-// Reserve 0x80..0xAB for Hangul page prefixes.
-// Dictionary entries occupy 0xAC..0xEF (68 slots max).
-const V5DICT=DICT.slice(0,68);
-const DREV=new Map(V5DICT.map((w,i)=>[w,i]));
-const SDICT=[...V5DICT].sort((a,b)=>b.length-a.length);
-const te=new TextEncoder();
-const td=new TextDecoder("utf-8",{fatal:true});
+const REV = new Map(TOKENS.map((t,i)=>[t,i]));
+const te = new TextEncoder();
+const td = new TextDecoder("utf-8", {fatal:true});
 
-function encodeCodes(text){
-  const out=[];
-  let i=0;
+function bytesTo5(bytes){
+  const out = [];
+  let acc = 0, bits = 0;
 
-  while(i<text.length){
-    let found=null;
-    for(const w of SDICT){
-      if(text.startsWith(w,i)){found=w;break;}
+  for(const b of bytes){
+    acc = (acc << 8) | b;
+    bits += 8;
+
+    while(bits >= 5){
+      bits -= 5;
+      out.push((acc >> bits) & 31);
+      acc &= bits ? ((1 << bits) - 1) : 0;
     }
+  }
 
-    if(found){
-      out.push(0xAC + DREV.get(found));
-      i+=found.length;
-      continue;
-    }
-
-    const cp=text.codePointAt(i);
-    const ch=String.fromCodePoint(cp);
-
-    // ASCII = 1 token
-    if(cp<=0x7F){
-      out.push(cp);
-    }
-    // Modern Hangul = 2 tokens instead of UTF-8's 3 bytes
-    else if(cp>=0xAC00 && cp<=0xD7A3){
-      const idx=cp-0xAC00;
-      out.push(0x80 + (idx>>8), idx&255);
-    }
-    // Other Unicode = escape + UTF-8 length + UTF-8 bytes
-    else{
-      const bytes=te.encode(ch);
-      out.push(0xF0,bytes.length,...bytes);
-    }
-
-    i+=ch.length;
+  if(bits > 0){
+    out.push((acc << (5 - bits)) & 31);
   }
 
   return out;
+}
+
+function fiveToBytes(values, expectedLength){
+  const out = [];
+  let acc = 0, bits = 0;
+
+  for(const v of values){
+    acc = (acc << 5) | v;
+    bits += 5;
+
+    while(bits >= 8 && out.length < expectedLength){
+      bits -= 8;
+      out.push((acc >> bits) & 255);
+      acc &= bits ? ((1 << bits) - 1) : 0;
+    }
+  }
+
+  if(out.length !== expectedLength){
+    throw Error("우사기 언어가 중간에 끊겼어.");
+  }
+
+  return Uint8Array.from(out);
 }
 
 function enc(text){
-  return encodeCodes(text).map(c=>TOKENS[c]).join(" ");
+  const payload = te.encode(text);
+
+  // 최대 40자 기준 UTF-8 160바이트 이하.
+  if(payload.length > 255){
+    throw Error("메시지가 너무 길어.");
+  }
+
+  // 첫 1바이트에 실제 UTF-8 바이트 길이를 기록해서
+  // 마지막 5bit 패딩을 정확하게 제거할 수 있게 함.
+  const all = Uint8Array.from([payload.length, ...payload]);
+  return bytesTo5(all).map(v => TOKENS[v]).join(" ");
 }
 
 function dec(encoded){
-  const parts=encoded.trim().split(/\s+/).filter(Boolean);
-  const bytes=parts.map(t=>{
-    const c=REV.get(t);
-    if(c===undefined) throw Error("알 수 없는 우사기 언어가 있어.");
-    return c;
+  const parts = encoded.trim().split(/\s+/).filter(Boolean);
+
+  if(!parts.length) return "";
+
+  const values = parts.map(t=>{
+    const v = REV.get(t);
+    if(v === undefined){
+      throw Error("등록되지 않은 우사기 언어가 있어.");
+    }
+    return v;
   });
 
-  let out="";
-  for(let i=0;i<bytes.length;){
-    const c=bytes[i++];
+  // 먼저 전체를 충분히 바이트로 풀어서 길이 헤더를 확인.
+  const maxByteLength = Math.floor(values.length * 5 / 8);
+  if(maxByteLength < 1) throw Error("우사기 언어가 너무 짧아.");
 
-    if(c<=0x7F){
-      out+=String.fromCharCode(c);
-    }
-    else if(c>=0x80 && c<=0xAB){
-      if(i>=bytes.length) throw Error("한글 코드가 중간에 끊겼어.");
-      const lo=bytes[i++];
-      const idx=((c-0x80)<<8)|lo;
-      if(idx>=11172) throw Error("잘못된 한글 코드야.");
-      out+=String.fromCharCode(0xAC00+idx);
-    }
-    else if(c>=0xAC && c<=0xEF){
-      const di=c-0xAC;
-      if(di>=V5DICT.length) throw Error("등록되지 않은 단어 코드야.");
-      out+=V5DICT[di];
-    }
-    else if(c===0xF0){
-      if(i>=bytes.length) throw Error("특수문자 코드가 중간에 끊겼어.");
-      const len=bytes[i++];
-      if(len<1||len>4||i+len>bytes.length) throw Error("특수문자 코드가 올바르지 않아.");
-      out+=td.decode(Uint8Array.from(bytes.slice(i,i+len)));
-      i+=len;
-    }
-    else{
-      throw Error("예약된 코드야.");
-    }
+  const rough = fiveToBytes(values, maxByteLength);
+  const payloadLength = rough[0];
+
+  if(payloadLength + 1 > rough.length){
+    throw Error("우사기 언어가 손상됐어.");
   }
-  return out;
+
+  return td.decode(rough.slice(1, 1 + payloadLength));
 }
 
 let mode="encode";
-const $=x=>document.getElementById(x),input=$("input"),output=$("output"),status=$("status"),counter=$("counter");
+const $=x=>document.getElementById(x),
+      input=$("input"),
+      output=$("output"),
+      status=$("status"),
+      counter=$("counter");
 
 function setMode(m){
   mode=m;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.mode===m));
+  document.querySelectorAll(".tab").forEach(x=>
+    x.classList.toggle("active", x.dataset.mode===m)
+  );
+
   if(m==="encode"){
     input.maxLength=40;
     input.placeholder="메시지를 입력해줘";
@@ -413,16 +437,21 @@ function setMode(m){
     $("go").textContent="사람 언어로 바꾸기";
     $("countWrap").style.display="none";
   }
+
   output.value="";
   status.textContent="";
 }
 
-document.querySelectorAll(".tab").forEach(x=>x.onclick=()=>setMode(x.dataset.mode));
+document.querySelectorAll(".tab").forEach(x=>
+  x.onclick=()=>setMode(x.dataset.mode)
+);
 
 input.oninput=()=>{
   if(mode==="encode"){
     const chars=[...input.value];
-    if(chars.length>40) input.value=chars.slice(0,40).join("");
+    if(chars.length>40){
+      input.value=chars.slice(0,40).join("");
+    }
     counter.textContent=[...input.value].length;
   }
 };
@@ -430,9 +459,9 @@ input.oninput=()=>{
 $("go").onclick=()=>{
   try{
     if(mode==="encode"){
-      const c=encodeCodes(input.value);
-      output.value=c.map(x=>TOKENS[x]).join(" ");
-      status.textContent=`우사기 언어로 바꿨어! · ${c.length}토큰`;
+      output.value=enc(input.value);
+      const tokenCount=output.value ? output.value.split(/\s+/).length : 0;
+      status.textContent=`우사기 언어로 바꿨어! · ${tokenCount}토큰`;
     }else{
       output.value=dec(input.value);
       status.textContent="사람 언어로 바꿨어!";
@@ -443,7 +472,8 @@ $("go").onclick=()=>{
 };
 
 $("copy").onclick=async()=>{
-  if(!output.value)return status.textContent="복사할 결과가 없어.";
+  if(!output.value) return status.textContent="복사할 결과가 없어.";
+
   try{
     await navigator.clipboard.writeText(output.value);
     status.textContent="복사했어!";
@@ -456,15 +486,24 @@ $("copy").onclick=async()=>{
 
 $("swap").onclick=()=>{
   if(!output.value)return;
+
   const v=output.value;
-  setMode(mode==="encode"?"decode":"encode");
+  setMode(mode==="encode" ? "decode" : "encode");
   input.value=v;
-  if(mode==="encode") counter.textContent=[...input.value].length;
+
+  if(mode==="encode"){
+    counter.textContent=[...input.value].length;
+  }
 };
 
 $("example").onclick=()=>{
-  input.value=mode==="encode"?"오늘 퇴근하면 저녁 먹자 ㅋㅋ":enc("내일 수업 끝나고 카페 갈래?");
-  if(mode==="encode") counter.textContent=[...input.value].length;
+  input.value = mode==="encode"
+    ? "오늘 뭐해?"
+    : enc("내일 보자!");
+
+  if(mode==="encode"){
+    counter.textContent=[...input.value].length;
+  }
 };
 
 $("clear").onclick=()=>{
@@ -474,13 +513,16 @@ $("clear").onclick=()=>{
   counter.textContent="0";
 };
 
-// Round-trip self-test
+// 기본 왕복 검증
 [
+  "오늘 뭐해?",
   "렌더링 테스트가 뭐야?",
-  "오늘 퇴근하면 저녁 먹자 ㅋㅋ",
-  "Chrome test 123!",
+  "Hello!",
+  "日本語テスト",
   "우사기🐰"
 ].forEach(s=>{
-  if(dec(enc(s))!==s) throw Error("v5 self-test 실패: "+s);
+  if(dec(enc(s))!==s){
+    throw Error("우사기 언어 self-test 실패: "+s);
+  }
 });
 </script></body></html>
